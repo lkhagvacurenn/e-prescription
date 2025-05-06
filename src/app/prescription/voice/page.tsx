@@ -84,8 +84,8 @@ export default function VoicePrescriptionPage() {
 
 
   const handleVoiceCommand = (voiceText: string) => {
-    if (voiceText.toLowerCase().includes('жор нэм')) {
-      const cleaned = voiceText.replace(/жор нэм/i, '').trim();
+    if (voiceText.toLowerCase().includes('эмийн жор')) {
+      const cleaned = voiceText.replace(/эмийн жор/i, '').trim();
       const parsed = parseSentence(cleaned);
       const current = form.getFieldValue('medicines') || [];
       form.setFieldsValue({ medicines: [...current, parsed] });

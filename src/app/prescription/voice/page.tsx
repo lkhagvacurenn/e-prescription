@@ -1,13 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Typography, Button, Form, Input, Select, message, Row, Col } from 'antd';
-import dayjs from 'dayjs';
-import { parseVoiceText } from '@/utils/voiceParser';
+import {Typography,Button,Form,message} from 'antd';
 import Lottie from 'lottie-react';
-import voiceAnimation from '@/assets/voice-animation.json'; 
-
-const { Option } = Select;
+import voiceAnimation from '@/assets/voice-animation.json';
+import PrescriptionForm from '@/components/PrescriptionForm';
+import {parseSentence} from '@/utils/parseSentence';
 
 export default function VoicePrescriptionPage() {
   const [form] = Form.useForm();
@@ -15,9 +13,11 @@ export default function VoicePrescriptionPage() {
   const [text, setText] = useState('');
   const recognitionRef = useRef<any>(null);
 
+  // 🔁 Speech Recognition Setup
   useEffect(() => {
     const SpeechRecognition =
-      (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      (window as any).webkitSpeechRecognition ||
+      (window as any).SpeechRecognition;
 
     if (!SpeechRecognition) {
       alert('Танай браузер дэмжихгүй байна.');
@@ -29,24 +29,50 @@ export default function VoicePrescriptionPage() {
     recognition.continuous = false;
     recognition.interimResults = false;
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = async (event: any) => {
       const voiceText = event.results[0][0].transcript;
       setText(voiceText);
       setIsListening(false);
+      
+      handleVoiceCommand(voiceText);
 
-      const parsed = parseVoiceText(voiceText);
-      console.log('Parsed voice input:', parsed);
-      form.setFieldsValue(parsed);
+      const parsed = await callVoiceAPI(voiceText);
+      if (parsed) {
+        console.log('Parsed from API:', parsed);
+        form.setFieldsValue(parsed);
+      }
     };
 
     recognition.onerror = (e: any) => {
       console.error(e);
       setIsListening(false);
-      message.error('Voice уншиж чадсангүй');
+      message.error('Дуу танихад алдаа гарлаа');
     };
 
     recognitionRef.current = recognition;
   }, [form]);
+
+  // 📡 Call Transcription API
+  const callVoiceAPI = async (text: string) => {
+    try {
+      const response = await fetch('http://64.119.31.61:6444/transcribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }),
+      });
+
+      if (!response.ok) throw new Error('API error');
+
+      const data = await response.json();
+      return data; // Expects fields: { medicine, dose, frequency, duration }
+    } catch (err) {
+      console.error(err);
+      message.error('Сервертэй холбогдож чадсангүй.');
+      return null;
+    }
+  };
 
   const startListening = () => {
     if (recognitionRef.current) {
@@ -56,13 +82,37 @@ export default function VoicePrescriptionPage() {
     }
   };
 
+
+  const handleVoiceCommand = (voiceText: string) => {
+    if (voiceText.toLowerCase().includes('эмийн жор')) {
+      const cleaned = voiceText.replace(/эмийн жор/i, '').trim();
+      const parsed = parseSentence(cleaned);
+      const current = form.getFieldValue('medicines') || [];
+      form.setFieldsValue({ medicines: [...current, parsed] });
+      message.success('Эм амжилттай нэмэгдлээ!');
+    } else {
+      // fallback: just fill first item
+      const parsed = parseSentence(voiceText);
+      form.setFieldsValue({ medicines: [parsed] });
+      message.success('Мэдээлэл бөглөгдлөө');
+    }
+  };
+
+
+
   const onFinish = (values: any) => {
     console.log('Илгээж буй жор:', values);
     message.success('Амжилттай хадгалагдлаа!');
   };
 
   return (
-    <div style={{ padding: 24,display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
       <Typography.Title level={3}>Дуу хоолойгоор жор бөглөх</Typography.Title>
 
       <div style={{ width: 200 }}>
@@ -73,8 +123,8 @@ export default function VoicePrescriptionPage() {
         />
       </div>
 
-      <Button type="primary" onClick={startListening}>
-        start
+      <Button type="primary" onClick={startListening} style={{marginBottom: 24}}>
+        Start Listening
       </Button>
 
       {text && (
@@ -83,55 +133,8 @@ export default function VoicePrescriptionPage() {
         </Typography.Paragraph>
       )}
 
-      <Form
-        layout="vertical"
-        form={form}
-        onFinish={onFinish}
-        initialValues={{ date: dayjs() }}
-        style={{ marginTop: 40 }}
-      >
-        <Row gutter={16}>
-          <Col xs={24} md={12}>
-            <Form.Item name="medicine" label="Эмийн нэр" rules={[{ required: true }]}>
-              <Select placeholder="Эм сонгоно уу">
-                <Option value="Paracetamol">Paracetamol</Option>
-                <Option value="Ibuprofen">Ibuprofen</Option>
-                <Option value="Amoxicillin">Amoxicillin</Option>
-              </Select>
-            </Form.Item>
-          </Col>
+      <PrescriptionForm form={form} onFinish={onFinish} />
 
-          <Col xs={24} md={12}>
-            <Form.Item name="dose" label="Тун" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} md={12}>
-            <Form.Item name="frequency" label="Давтамж" rules={[{ required: true }]}>
-              <Select>
-                <Option value="once">Өдөрт 1 удаа</Option>
-                <Option value="twice">Өдөрт 2 удаа</Option>
-                <Option value="thrice">Өдөрт 3 удаа</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} md={12}>
-            <Form.Item name="duration" label="Хугацаа" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24}>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Жор хадгалах
-              </Button>
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
     </div>
   );
 }

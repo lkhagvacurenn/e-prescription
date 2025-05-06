@@ -22,4 +22,4 @@ export const mockMedicines = [
       instructions: "Өдөрт 2 удаа усаар даруулж ууна",
     },
   ];
-  
+  export default mockMedicines;

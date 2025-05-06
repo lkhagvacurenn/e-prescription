@@ -1,0 +1,144 @@
+:root {
+  --bg: #0f0f13;
+  --card: #1e1e28;
+  --accent: #6c5ce7;
+  --text: #f5f5f7;
+  --subtext: #a0a0a7;
+}
+
+.container {
+  background: var(--bg);
+  min-height: 100vh;
+  color: var(--text);
+}
+
+.main {
+  padding: 24px;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: var(--card);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.logo {
+  color: var(--accent);
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.search {
+  max-width: 800px;
+  flex: 1;
+  margin: 0 16px;
+}
+
+.addBtnWrapper {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.glowBtn {
+  width: 100%;
+  background-color: var(--accent);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(108, 92, 231, 0.4);
+  border: none;
+  cursor: pointer;
+}
+
+.glowBtn:hover {
+  background-color: #7d6ef0 !important;
+  box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+  transform: translateY(-2px);
+}
+
+/* .history {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  transition: 0.3s ease;
+  cursor: pointer;
+} */
+
+.history:hover {
+  background: rgba(108, 92, 231, 0.2) !important;
+  box-shadow: 0 8px 40px rgba(108, 92, 231, 0.15);
+  transform: translateY(-2px);
+}
+
+/* .title {
+  color: var(--text) !important;
+} */
+
+.list {
+  margin-top: 16px;
+  list-style: none;
+  padding: 0;
+}
+
+.listItem {
+  background-color: #1a1a24;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  padding: 12px 16px;
+  transition: all 0.3s ease;
+}
+
+.listItem:hover {
+  background-color: #232334;
+}
+
+.medName {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.date {
+  color: var(--subtext);
+}
+
+.medDetails {
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
+.medDetails p {
+  margin: 4px 0;
+}
+
+.medDetails .date strong {
+  color: var(--text);
+  margin-right: 8px;
+}
+
+.history {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+#pharmacy-map {
+  width: 100%;
+  min-height: 500px;
+}

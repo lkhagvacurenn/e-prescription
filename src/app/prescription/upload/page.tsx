@@ -47,7 +47,7 @@ export default function UploadPrescriptionPage() {
           <InboxOutlined />
         </p>
         <p className="ant-upload-text">Зураг дарж сонгох эсвэл чирж тавих</p>
-        <p className="ant-upload-hint">JPG, PNG, HEIC, PDF (image) зөвшөөрнө</p>
+        <p >JPG, PNG, HEIC, PDF (image) зөвшөөрнө</p>
       </Upload.Dragger>
 
       <div style={{ textAlign: 'center', marginTop: 24 }}>

@@ -1,5 +1,5 @@
 'use client';
-import { Input, Avatar, Space } from 'antd';
+import { Input, Avatar, } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
 export default function Header() {
@@ -17,7 +17,7 @@ export default function Header() {
         <Input.Search
           placeholder="Жор хайх..."
           allowClear
-          style={{ width: '100%', maxWidth: 800 }}
+          style={{ width: '100%', maxWidth: 800, color: '#000000' }}
         />
         <Avatar icon={<UserOutlined />} />
     </div>

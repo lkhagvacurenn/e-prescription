@@ -1,9 +1,10 @@
 'use client';
 
 import Header from '@/components/Header';
-import AddPrescriptionButton from '@/components/AddPrescriptionButton';
 import AddPrescriptionModal from '@/components/AddPrescriptionModal';
-import PrescriptionHistory from '@/components/PrescriptionHistory';
+import PrescriptionList from '@/components/PrescriptionList';
+
+import mockPrescriptions from '@/mock/prescriptions/mockPrescriptions';
 
 export default function DoctorHome() {
   return (
@@ -11,7 +12,7 @@ export default function DoctorHome() {
       <Header />
       <main style={{ paddingTop: 24 }}>
         <AddPrescriptionModal/>
-        <PrescriptionHistory />
+        <PrescriptionList prescriptions={mockPrescriptions}/>
       </main>
     </div>
   );

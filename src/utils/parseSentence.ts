@@ -1,5 +1,5 @@
 export function parseSentence(text: string) {
-  const medicineMatch = text.match(/(парацетемол|эбо пропин|витамин)/i);
+  const medicineMatch = text.match(/(Парацетамол|эбо пропин|витамин)/i);
 
   const words = text.split(/\s+/).map(convertMongolianNumber);
   const normalizedText = words.join(' ');
@@ -25,17 +25,27 @@ export function parseSentence(text: string) {
   function convertMongolianNumber(word: string): string {
     const map: Record<string, string> = {
       'нэг': '1',
+      'нэгэн': '1',
       'хоёр': '2',
       'гурав': '3',
+      'гурван': '3',
       'дөрөв': '4',
+      'дөрвөн': '4',
       'тав': '5',
+      'таван': '5',
       'зургаа': '6',
+      'зургаан': '6',
       'долоо': '7',
+      'долоон': '7',
       'найм': '8',
+      'найман': '8',
       'ес': '9',
+      'есөн': '9',
       'арав': '10',
+      'арван': '10',
     };
     return map[word.trim().toLowerCase()] || word;
   }
+  
   
 }

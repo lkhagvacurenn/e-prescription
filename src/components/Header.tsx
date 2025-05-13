@@ -12,7 +12,7 @@ export default function Header() {
       borderBottom: '1px solid #eee',
       gap: 16,
     }}>
-      <h2 style={{ margin: 0 }}>e-jor</h2>
+      <h2 style={{ margin: 0 }}>E-Жор</h2>
 
         <Input.Search
           placeholder="Жор хайх..."

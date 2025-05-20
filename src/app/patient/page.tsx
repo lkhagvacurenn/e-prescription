@@ -2,53 +2,21 @@
 
 import Header from '@/components/Header';
 import PharmacyMap from '@/components/PharmacyMap';
-import TextToSpeech from '@/components/TextToSpeech';
-import mockMedicines from '@/mock/medicine/mockMedicines';
+import PrescriptionList from '@/components/PrescriptionList';
+import mockPrescriptions from '@/mock/prescriptions/mockPrescriptions'; // assume correct mock
 import styles from '@/styles/patience.module.css';
-
-// Эмийн мэдээллийн интерфэйс
-interface Medicine {
-  name: string;
-  defaultDose: string;
-  defaultFrequency: string;
-  defaultDuration: string;
-  instructions: string;
-}
 
 export default function PatientHome() {
   // Жинхэнэ Google Maps API түлхүүрийг энд оруулна
-  const GOOGLE_MAPS_API_KEY = 'YOUR_API_KEY'; // Жинхэнэ идэвхтэй түлхүүр оруулна!
+  const GOOGLE_MAPS_API_KEY = 'YOUR_API_KEY';
 
   return (
     <div className={styles.container}>
       <Header />
       <main className={styles.main}>
-        <section id="prescriptions" className={styles.history}>
-          <h2 className={styles.title}>Миний эмийн жор</h2>
-          <ul className={styles.list}>
-            {mockMedicines.map((medicine: Medicine, index: number) => (
-              <li key={index} className={styles.listItem}>
-                <div className={styles.medNameWrapper}>
-                  <div className={styles.medName}>{medicine.name}</div>
-                  <TextToSpeech medicine={medicine} /> {/* Бүх талбаруудыг дамжуулах */}
-                </div>
-                <div className={styles.medDetails}>
-                  <p className={styles.date}>
-                    <strong>Тун:</strong> {medicine.defaultDose}
-                  </p>
-                  <p className={styles.date}>
-                    <strong>Давтамж:</strong> {medicine.defaultFrequency}
-                  </p>
-                  <p className={styles.date}>
-                    <strong>Хугацаа:</strong> {medicine.defaultDuration}
-                  </p>
-                  <p className={styles.date}>
-                    <strong>Заавар:</strong> {medicine.instructions}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
+        <section id="prescriptions">
+          <h2 className={styles.title}>Миний эмийн жорууд</h2>
+          <PrescriptionList prescriptions={mockPrescriptions} />
         </section>
         <PharmacyMap apiKey={GOOGLE_MAPS_API_KEY} searchType="pharmacy,drugstore" />
       </main>

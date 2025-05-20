@@ -3,84 +3,6 @@
 import { useState } from 'react';
 import styles from '@/styles/patience.module.css';
 
-// Эмийн мэдээллийн интерфэйс
-interface Medicine {
-  name: string;
-  defaultDose: string;
-  defaultFrequency: string;
-  defaultDuration: string;
-  instructions: string;
-}
-
-// Тоог Монгол хэлний Кирилл текст болгох функц
-function numberToMongolianText(numberStr: string): string {
-  // Тоог ялгах (жишээ: "500мг" → "500")
-  const numMatch = numberStr.match(/^\d+/);
-  if (!numMatch) return numberStr; // Тоо байхгүй бол хэвээр буцаах
-
-  const num = parseInt(numMatch[0], 10);
-  const suffix = numberStr.replace(/^\d+/, ''); // Жишээ: "мг"
-
-  // Тооны хязгаар (0-9999 хүртэл энгийн логикоор)
-  if (num < 0 || num > 9999) return numberStr; // Хэт том тоог хэвээр буцаах
-
-  // Монгол хэлний тооны нэршил
-  const units = ['', 'нэг', 'хоёр', 'гурав', 'дөрөв', 'тав', 'зургаа', 'долоо', 'найм', 'ес'];
-  const tens = ['', 'арав', 'хорь', 'гуч', 'дөч', 'тавь', 'жар', 'дал', 'ная', 'ер'];
-  const hundreds = ['', 'зуу', 'хоёр зуу', 'гурван зуу', 'дөрвөн зуу', 'таван зуу', 'зургаан зуу', 'долоон зуу', 'найман зуу', 'есөн зуу'];
-  const thousands = ['', 'мянга', 'хоёр мянга', 'гурван мянга', 'дөрвөн мянга', 'таван мянга', 'зургаан мянга', 'долоон мянга', 'найман мянга', 'есөн мянга'];
-
-  let result = '';
-
-  // Мянгат
-  const thousand = Math.floor(num / 1000);
-  if (thousand > 0) {
-    result += thousands[thousand] + ' ';
-  }
-
-  // Зуут
-  const hundred = Math.floor((num % 1000) / 100);
-  if (hundred > 0) {
-    result += hundreds[hundred] + ' ';
-  }
-
-  // Арав ба нэгж
-  const tenAndUnit = num % 100;
-  if (tenAndUnit >= 10 && tenAndUnit < 20) {
-    // Онцгой тоо (11-19)
-    const specialTeens = ['', 'арван нэг', 'арван хоёр', 'арван гурав', 'арван дөрөв', 'арван тав', 'арван зургаа', 'арван долоо', 'арван найм', 'арван ес'];
-    result += specialTeens[tenAndUnit - 10] + ' ';
-  } else {
-    const ten = Math.floor(tenAndUnit / 10);
-    const unit = tenAndUnit % 10;
-    if (ten > 0) {
-      result += tens[ten] + ' ';
-    }
-    if (unit > 0) {
-      result += units[unit] + ' ';
-    }
-  }
-
-  // Хэрэв тоо 0 бол
-  if (num === 0) {
-    result = 'тэг ';
-  }
-
-  return result.trim() + suffix; // Жишээ: "таван зуу миллиграмм"
-}
-
-// Талбарыг боловсруулах функц
-function processMedicineFields(medicine: Medicine): string {
-  const fields = [
-    `Эмийн нэр: ${medicine.name}`,
-    `Тун: ${numberToMongolianText(medicine.defaultDose)}`,
-    `Давтамж: ${numberToMongolianText(medicine.defaultFrequency)}`,
-    `Хугацаа: ${numberToMongolianText(medicine.defaultDuration)}`,
-    `Заавар: ${medicine.instructions}`,
-  ];
-  return fields.join(', ');
-}
-
 // API-аас WAV файл татах функц
 async function fetchWavFile(text: string): Promise<ArrayBuffer> {
   try {
@@ -98,10 +20,10 @@ async function fetchWavFile(text: string): Promise<ArrayBuffer> {
 }
 
 interface TextToSpeechProps {
-  medicine: Medicine; // Бүх эмийн талбарууд
+  text: string; 
 }
 
-export default function TextToSpeech({ medicine }: TextToSpeechProps) {
+export default function TextToSpeech({ text }: TextToSpeechProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioContext = typeof window !== 'undefined' ? new AudioContext() : null;
 
@@ -110,8 +32,6 @@ export default function TextToSpeech({ medicine }: TextToSpeechProps) {
 
     try {
       setIsPlaying(true);
-      // Бүх талбарыг боловсруулж, тоог Кирилл текст болгох
-      const text = processMedicineFields(medicine);
       const wavBuffer = await fetchWavFile(text);
 
       const audioBuffer = await audioContext.decodeAudioData(wavBuffer);
@@ -132,7 +52,7 @@ export default function TextToSpeech({ medicine }: TextToSpeechProps) {
       className={`${styles.speakerBtn} ${isPlaying ? styles.playing : ''}`}
       onClick={handlePlayAudio}
       disabled={isPlaying}
-      aria-label={`Унших: ${medicine.name}`}
+      aria-label="Жорыг унших"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

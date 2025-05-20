@@ -1,7 +1,9 @@
 'use client';
+
 import { useState } from 'react';
-import { Card, Modal, Typography, List, Button } from 'antd';
+import { Card, Modal, Typography, List, Button, Space } from 'antd';
 import dayjs from 'dayjs';
+import TextToSpeech from '@/components/TextToSpeech';
 
 interface Medicine {
   medicine: string;
@@ -25,10 +27,26 @@ interface Props {
 export default function PrescriptionList({ prescriptions }: Props) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<Prescription | null>(null);
+  const [showQR, setShowQR] = useState(false);
 
   const handleCardClick = (prescription: Prescription) => {
     setSelected(prescription);
     setOpen(true);
+    setShowQR(false); // Reset QR toggle on open
+  };
+
+  const generateSpeechText = (prescription: Prescription) => {
+    return prescription.medicines
+      .map(
+        (med, idx) =>
+          `${idx + 1}. Эмийн нэр: ${med.medicine}, тун: ${med.dose}, давтамж: ${med.frequency}, хугацаа: ${med.duration}${med.usage ? ', заавар: ' + med.usage : ''}`
+      )
+      .join(' | ');
+  };
+
+  const generateQrUrl = (prescription: Prescription) => {
+    const jsonData = JSON.stringify(prescription);
+    return `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(jsonData)}&size=200x200`;
   };
 
   return (
@@ -46,7 +64,7 @@ export default function PrescriptionList({ prescriptions }: Props) {
               hoverable
               onClick={() => handleCardClick(item)}
             >
-              <p style={{color:"#5694f0"}}>Дэлгэрэнгүй харах</p>
+              <p style={{ color: "#5694f0" }}>Дэлгэрэнгүй харах</p>
             </Card>
           </List.Item>
         )}
@@ -61,6 +79,24 @@ export default function PrescriptionList({ prescriptions }: Props) {
         {selected && (
           <>
             <p><strong>Огноо:</strong> {dayjs(selected.date).format('YYYY-MM-DD')}</p>
+
+            <Space style={{ marginBottom: 16 }}>
+              <TextToSpeech text={generateSpeechText(selected)} />
+              <Button onClick={() => setShowQR(!showQR)}>
+                {showQR ? 'QR нуух' : 'QR үүсгэх'}
+              </Button>
+            </Space>
+
+            {showQR && (
+              <div style={{ marginBottom: 16 }}>
+                <img
+                  src={generateQrUrl(selected)}
+                  alt="Жорын QR код"
+                  style={{ border: '1px solid #ccc', padding: 8 }}
+                />
+              </div>
+            )}
+
             <List
               header={<strong>Эмийн жагсаалт</strong>}
               dataSource={selected.medicines}
@@ -74,7 +110,10 @@ export default function PrescriptionList({ prescriptions }: Props) {
                 </List.Item>
               )}
             />
-            {selected.note && <p style={{ marginTop: 12 }}><strong>Тэмдэглэл:</strong> {selected.note}</p>}
+
+            {selected.note && (
+              <p style={{ marginTop: 12 }}><strong>Тэмдэглэл:</strong> {selected.note}</p>
+            )}
           </>
         )}
       </Modal>

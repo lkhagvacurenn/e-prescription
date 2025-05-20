@@ -3,7 +3,7 @@ const mockPrescriptions =[
       patientName: 'VP04040404',
       date: '2025-05-06',
       medicines: [
-        { medicine: 'Ibuprofen', dose: '400mg', frequency: 'twice', duration: '5 хоног', usage: 'Хоолны дараа' },
+        { medicine: 'Витамин Си', dose: 'дөрвөн зуун милограмм', frequency: 'хоёр удаа', duration: 'таван хоног', usage: 'хоолны дараа' },
         { medicine: 'Paracetamol', dose: '500mg', frequency: 'once', duration: '3 хоног' }
       ],
       note: 'Давхар антибиотик хэрэглэхгүй байх'
